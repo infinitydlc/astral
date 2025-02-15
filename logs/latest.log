@@ -1253,3 +1253,14 @@ java.io.FileNotFoundException: icons/icon_16x16.png
 [02:02:17] [Server thread/INFO]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_end
 [02:02:17] [main/INFO]: Loaded 23 advancements
 [02:02:55] [main/INFO]: Loaded 37 advancements
+[02:47:07] [Server thread/INFO]: Saving and pausing game...
+[02:47:07] [Server thread/INFO]: Saving chunks for level 'ServerLevel[New World]'/minecraft:overworld
+[02:47:07] [Server thread/INFO]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_nether
+[02:47:07] [Server thread/INFO]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_end
+[02:47:32] [main/INFO]: Loaded 37 advancements
+[02:47:38] [main/INFO]: Loaded 43 advancements
+[02:47:47] [main/INFO]: [CHAT] Expensive Client§8 -> §rУ вас нет полублоков в хотбаре!
+[02:48:57] [main/INFO]: Loaded 57 advancements
+[02:49:39] [Thread-37/INFO]: [STDOUT]: Anti Xray: sleep interrupted
+[02:49:42] [main/INFO]: Loaded 57 advancements
+[02:49:45] [main/INFO]: Loaded 57 advancements

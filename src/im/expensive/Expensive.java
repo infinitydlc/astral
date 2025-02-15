@@ -95,6 +95,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Expensive {
+    /*
+    дрочеслав ебагый пидор
+     */
 
     public static UserData userData;
     public boolean playerOnServer = false;
