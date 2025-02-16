@@ -51,7 +51,7 @@ public class ClientUtil implements IMinecraft {
         }
         try {
             currentClip = AudioSystem.getClip();
-            InputStream is = mc.getResourceManager().getResource(new ResourceLocation("expensive/sounds/" + sound + ".wav")).getInputStream();
+            InputStream is = mc.getResourceManager().getResource(new ResourceLocation("astral/sounds/" + sound + ".wav")).getInputStream();
             BufferedInputStream bis = new BufferedInputStream(is);
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(bis);
             if (audioInputStream == null) {

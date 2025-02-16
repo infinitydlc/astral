@@ -45,7 +45,7 @@ public class HitSound extends Function {
     public void playSound(Entity e) {
         try {
             Clip clip = AudioSystem.getClip();
-            InputStream is = mc.getResourceManager().getResource(new ResourceLocation("expensive/sounds/" + sound.get() + ".wav")).getInputStream();
+            InputStream is = mc.getResourceManager().getResource(new ResourceLocation("astral/sounds/" + sound.get() + ".wav")).getInputStream();
             BufferedInputStream bis = new BufferedInputStream(is);
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(bis);
             if (audioInputStream == null) {

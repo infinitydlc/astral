@@ -13,7 +13,7 @@ import java.util.LinkedHashMap;
 public class DragManager {
     public static LinkedHashMap<String, Dragging> draggables = new LinkedHashMap<>();
 
-    private static final File DRAG_DATA = new File(Minecraft.getInstance().gameDir, "\\expensive\\files\\drags.cfg");
+    private static final File DRAG_DATA = new File(Minecraft.getInstance().gameDir, "\\astral\\files\\drags.cfg");
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().create();
 
     public static void save() {

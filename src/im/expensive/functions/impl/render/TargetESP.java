@@ -39,7 +39,7 @@ public class TargetESP extends Function {
             GlStateManager.translatef(pos.x, pos.y, 0);
             GlStateManager.rotatef((float) sin * 360, 0, 0, 1);
             GlStateManager.translatef(-pos.x, -pos.y, 0);
-            DisplayUtils.drawImage(new ResourceLocation("expensive/images/target.png"), pos.x - size / 2f, pos.y - size / 2f, size, size, new Vector4i(
+            DisplayUtils.drawImage(new ResourceLocation("astral/images/target.png"), pos.x - size / 2f, pos.y - size / 2f, size, size, new Vector4i(
                     ColorUtils.setAlpha(HUD.getColor(0, 1), 220),
                     ColorUtils.setAlpha(HUD.getColor(90, 1), 220),
                     ColorUtils.setAlpha(HUD.getColor(180, 1), 220),

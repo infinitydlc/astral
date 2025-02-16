@@ -19,7 +19,7 @@ import java.util.zip.Inflater;
 public class ConfigStorage {
     public final Logger logger = Logger.getLogger(ConfigStorage.class.getName());
 
-    public final File CONFIG_DIR = new File(Minecraft.getInstance().gameDir, "\\expensive\\configs");
+    public final File CONFIG_DIR = new File(Minecraft.getInstance().gameDir, "\\astral\\configs");
     public final File AUTOCFG_DIR = new File(CONFIG_DIR, "autocfg.cfg");
 
     public final JsonParser jsonParser = new JsonParser();

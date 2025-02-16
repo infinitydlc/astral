@@ -95,7 +95,7 @@ public final class MsdfFont {
   
     public static class Builder {
       
-        public static final String MSDF_PATH = "expensive/fonts/";
+        public static final String MSDF_PATH = "astral/fonts/";
         private String name = "undefined";
         private ResourceLocation dataFile;
         private ResourceLocation atlasFile;

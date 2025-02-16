@@ -27,7 +27,7 @@ public class JumpCircle extends Function {
         circles.add(new Circle(mc.player.getPositon(mc.getRenderPartialTicks()).add(0,0.05, 0)));
     }
 
-    private final ResourceLocation circle = new ResourceLocation("expensive/images/circle.png");
+    private final ResourceLocation circle = new ResourceLocation("astral/images/circle.png");
 
     @Subscribe
     private void onRender(WorldEvent e) {

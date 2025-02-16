@@ -19,8 +19,8 @@ import net.minecraft.util.text.ITextComponent;
 @RequiredArgsConstructor
 public class WatermarkRenderer implements ElementRenderer {
 
-    final ResourceLocation logo = new ResourceLocation("expensive/images/hud/logo.png");
-    private final ResourceLocation user = new ResourceLocation("expensive/images/hud/user.png");
+    final ResourceLocation logo = new ResourceLocation("astral/images/hud/logo.png");
+    private final ResourceLocation user = new ResourceLocation("astral/images/hud/user.png");
 
     @Override
     public void render(EventDisplay eventDisplay) {

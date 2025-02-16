@@ -37,8 +37,8 @@ public class MainScreen extends Screen implements IMinecraft {
 
     }
 
-    private final ResourceLocation backmenu = new ResourceLocation("expensive/images/backmenu.png");
-    private final ResourceLocation logo = new ResourceLocation("expensive/images/logo.png");
+    private final ResourceLocation backmenu = new ResourceLocation("astral/images/backmenu.png");
+    private final ResourceLocation logo = new ResourceLocation("astral/images/logo.png");
 
     private final List<Button> buttons = new ArrayList<>();
 
@@ -140,7 +140,7 @@ public class MainScreen extends Screen implements IMinecraft {
         buttons.forEach(b -> b.render(stack, mX, mY, pt));
     }
 
-    public static final ResourceLocation button = new ResourceLocation("expensive/images/button.png");
+    public static final ResourceLocation button = new ResourceLocation("astral/images/button.png");
 
     private class Particle {
 

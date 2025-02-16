@@ -4,7 +4,7 @@
 Time: 25.01.2024, 04:14
 Description: Initializing game
 
-java.lang.NoClassDefFoundError: im/expensive/functions/impl/player/InventoryMove
+java.lang.NoClassDefFoundError: im/astral/functions/impl/player/InventoryMove
 	at im.expensive.functions.api.FunctionRegistry.init(FunctionRegistry.java:101)
 	at im.expensive.Expensive.clientLoad(Expensive.java:194)
 	at im.expensive.Expensive.<init>(Expensive.java:147)
