@@ -473,7 +473,7 @@ public class Minecraft extends RecursiveEventLoop<Runnable> implements ISnooperI
         if (selfDestruct.unhooked) {
             this.mainWindow.setWindowTitle(getWindowTitle());
         } else {
-            this.mainWindow.setWindowTitle("Expensive 3.1 - different colored diamonds");
+            this.mainWindow.setWindowTitle("Astral Client - best client 1.16.5");
         }
     }
 

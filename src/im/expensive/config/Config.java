@@ -21,7 +21,7 @@ public class Config implements IMinecraft {
 
     public Config(String name) {
         this.name = name;
-        this.file = new File(new File(Minecraft.getInstance().gameDir, "\\expensive\\configs"), name + ".cfg");
+        this.file = new File(new File(Minecraft.getInstance().gameDir, "\\astral\\configs"), name + ".cfg");
     }
 
     public void loadConfig(JsonObject jsonObject) {

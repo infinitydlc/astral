@@ -12,7 +12,7 @@ import java.util.List;
 
 public class MacroManager implements IMinecraft {
     public List<Macro> macroList = new ArrayList<>();
-    public File macroFile = new File(mc.gameDir, "\\expensive\\files\\macro.cfg");
+    public File macroFile = new File(mc.gameDir, "\\astral\\files\\macro.cfg");
 
 
     public void init() throws IOException {

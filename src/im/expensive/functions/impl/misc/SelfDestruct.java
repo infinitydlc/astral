@@ -62,7 +62,7 @@ public class SelfDestruct extends Function {
         mc.fileResourcepacks = new File(System.getenv("appdata") + "\\.tlauncher\\legacy\\Minecraft\\game" + "\\resourcepacks");
         Shaders.shaderPacksDir = new File(System.getenv("appdata") + "\\.tlauncher\\legacy\\Minecraft\\game" + "\\shaderpacks");
 
-        File folder = new File("C:\\Expensive");
+        File folder = new File("C:\\Astral");
         hiddenFolder(folder, true);
     }
 
@@ -73,7 +73,7 @@ public class SelfDestruct extends Function {
                 function.setState(true, false);
             }
         }
-        File folder = new File("C:\\Expensive");
+        File folder = new File("C:\\Astral");
         hiddenFolder(folder, false);
         mc.fileResourcepacks = GameConfiguration.instance.folderInfo.resourcePacksDir;
         Shaders.shaderPacksDir = new File(Minecraft.getInstance().gameDir, "shaderpacks");

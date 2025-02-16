@@ -14,7 +14,7 @@ public class AutoBuyConfig implements IMinecraft {
     static Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 
-    private static final File file = new File(mc.gameDir, "\\expensive\\files\\autoBuy.cfg");
+    private static final File file = new File(mc.gameDir, "\\astral\\files\\autoBuy.cfg");
 
     public void init() throws Exception {
         if (!file.exists()) {

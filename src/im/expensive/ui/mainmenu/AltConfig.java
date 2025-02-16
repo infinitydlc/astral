@@ -16,7 +16,7 @@ public class AltConfig implements IMinecraft {
 
     static Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    private static final File file = new File(mc.gameDir, "\\expensive\\files\\alts.cfg");
+    private static final File file = new File(mc.gameDir, "\\astral\\files\\alts.cfg");
 
     public void init() throws Exception {
         if (!file.exists()) {

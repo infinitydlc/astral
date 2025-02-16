@@ -101,7 +101,7 @@ public class Expensive {
 
     public static UserData userData;
     public boolean playerOnServer = false;
-    public static final String CLIENT_NAME = "expensive solutions";
+    public static final String CLIENT_NAME = "Astral Client Solution";
 
     // Экземпляр Expensive
     @Getter
@@ -120,8 +120,8 @@ public class Expensive {
     private final ScriptManager scriptManager = new ScriptManager();
 
     // Директории
-    private final File clientDir = new File(Minecraft.getInstance().gameDir + "\\expensive");
-    private final File filesDir = new File(Minecraft.getInstance().gameDir + "\\expensive\\files");
+    private final File clientDir = new File(Minecraft.getInstance().gameDir + "\\astral");
+    private final File filesDir = new File(Minecraft.getInstance().gameDir + "\\astral\\files");
 
     // Элементы интерфейса
     private AltWidget altWidget;
