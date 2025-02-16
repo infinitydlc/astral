@@ -21,14 +21,18 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.Lifecycle;
 import im.expensive.Expensive;
+import im.expensive.command.friends.FriendStorage;
+import im.expensive.config.Config;
 import im.expensive.events.EventChangeWorld;
 import im.expensive.events.TickEvent;
+import im.expensive.functions.api.Function;
 import im.expensive.functions.api.FunctionRegistry;
 import im.expensive.functions.impl.combat.KillAura;
 import im.expensive.functions.impl.misc.SelfDestruct;
 import im.expensive.functions.impl.player.ItemCooldown;
 import im.expensive.ui.mainmenu.MainScreen;
 import im.expensive.utils.client.ClientUtil;
+import im.expensive.utils.drag.DragManager;
 import im.expensive.utils.render.font.Fonts;
 import lombok.Getter;
 import net.minecraft.block.Block;
@@ -139,7 +143,6 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -155,6 +158,8 @@ public class Minecraft extends RecursiveEventLoop<Runnable> implements ISnooperI
     private static final ITextComponent field_244596_I = new TranslationTextComponent(
             "multiplayer.socialInteractions.not_available");
     public File fileResourcepacks;
+    private Config config;
+
 
     /**
      * The player's GameProfile properties
@@ -327,6 +332,7 @@ public class Minecraft extends RecursiveEventLoop<Runnable> implements ISnooperI
             i = 0;
         }
 
+
         KeybindTextComponent.func_240696_a_(KeyBinding::getDisplayString);
         this.dataFixer = DataFixesManager.getDataFixer();
         this.toastGui = new ToastGui(this);
@@ -464,6 +470,8 @@ public class Minecraft extends RecursiveEventLoop<Runnable> implements ISnooperI
                 }, false));
         Fonts.register();
 
+
+
     }
 
     public void setDefaultMinecraftTitle() {
@@ -473,7 +481,7 @@ public class Minecraft extends RecursiveEventLoop<Runnable> implements ISnooperI
         if (selfDestruct.unhooked) {
             this.mainWindow.setWindowTitle(getWindowTitle());
         } else {
-            this.mainWindow.setWindowTitle("Astral Client - best client 1.16.5");
+            this.mainWindow.setWindowTitle("Expensive 0.7 Release - dsc.gg/Expensivedlc");
         }
     }
 
@@ -867,12 +875,22 @@ public class Minecraft extends RecursiveEventLoop<Runnable> implements ISnooperI
      * application (or web page) is exited.
      */
     public void shutdownMinecraftApplet() {
+        DragManager.save();
+        Config.save();
+        FriendStorage.save();
+
+
+
+
+        // Предполагается, что config доступен в этом контексте
+
         try {
             LOGGER.info("Stopping!");
 
             try {
                 NarratorChatListener.INSTANCE.close();
             } catch (Throwable throwable1) {
+                // обработка исключения
             }
 
             try {
@@ -882,6 +900,7 @@ public class Minecraft extends RecursiveEventLoop<Runnable> implements ISnooperI
 
                 this.unloadWorld();
             } catch (Throwable throwable) {
+                // обработка исключения
             }
 
             if (this.currentScreen != null) {
@@ -1806,8 +1825,10 @@ public class Minecraft extends RecursiveEventLoop<Runnable> implements ISnooperI
         }, false, WorldSelectionType.CREATE);
     }
 
+
+
     private void loadWorld(String worldName, DynamicRegistries.Impl dynamicRegistries,
-                           Function<SaveFormat.LevelSave, DatapackCodec> levelSaveToDatapackFunction,
+                           java.util.function.Function<SaveFormat.LevelSave, DatapackCodec> levelSaveToDatapackFunction,
                            Function4<SaveFormat.LevelSave, DynamicRegistries.Impl, IResourceManager, DatapackCodec, IServerConfiguration> quadFunction,
                            boolean vanillaOnly, WorldSelectionType selectionType) {
 
@@ -1977,7 +1998,7 @@ public class Minecraft extends RecursiveEventLoop<Runnable> implements ISnooperI
     }
 
     public PackManager reloadDatapacks(DynamicRegistries.Impl dynamicRegistries,
-                                       Function<SaveFormat.LevelSave, DatapackCodec> worldStorageToDatapackFunction,
+                                       java.util.function.Function<SaveFormat.LevelSave, DatapackCodec> worldStorageToDatapackFunction,
                                        Function4<SaveFormat.LevelSave, DynamicRegistries.Impl, IResourceManager, DatapackCodec, IServerConfiguration> quadFunction,
                                        boolean vanillaOnly, SaveFormat.LevelSave worldStorage) throws InterruptedException, ExecutionException {
         DatapackCodec datapackcodec = worldStorageToDatapackFunction.apply(worldStorage);
@@ -2499,7 +2520,7 @@ public class Minecraft extends RecursiveEventLoop<Runnable> implements ISnooperI
         return this.languageManager;
     }
 
-    public Function<ResourceLocation, TextureAtlasSprite> getAtlasSpriteGetter(ResourceLocation locationIn) {
+    public java.util.function.Function<ResourceLocation, TextureAtlasSprite> getAtlasSpriteGetter(ResourceLocation locationIn) {
         return this.modelManager.getAtlasTexture(locationIn)::getSprite;
     }
 

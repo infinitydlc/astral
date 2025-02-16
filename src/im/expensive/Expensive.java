@@ -12,6 +12,7 @@ import im.expensive.command.friends.FriendStorage;
 import im.expensive.command.impl.*;
 import im.expensive.command.impl.feature.*;
 import im.expensive.command.staffs.StaffStorage;
+import im.expensive.config.Config;
 import im.expensive.config.ConfigStorage;
 import im.expensive.events.EventKey;
 import im.expensive.functions.api.Function;
@@ -136,7 +137,7 @@ public class Expensive {
     private TPSCalc tpsCalc;
     private ActivationLogic activationLogic;
     private ItemStorage itemStorage;
-
+    private Config config;
     public Expensive() {
         instance = this;
 
@@ -146,7 +147,7 @@ public class Expensive {
         if (!filesDir.exists()) {
             filesDir.mkdirs();
         }
-
+        config = new Config(Config.currentConfig);
         clientLoad();
         FriendStorage.load();
         StaffStorage.load();
@@ -253,6 +254,9 @@ public class Expensive {
         ParametersFactory parametersFactory = new ParametersFactoryImpl();
 
         commandDispatcher = new StandaloneCommandDispatcher(commands, adviceCommandFactory, prefix, parametersFactory, logger);
+    }
+    public Config getConfig() {
+        return config;
     }
 
     private void initStyles() {

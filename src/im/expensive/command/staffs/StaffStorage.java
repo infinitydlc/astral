@@ -17,7 +17,7 @@ public class StaffStorage implements IMinecraft {
 
     @Getter
     private final Set<String> staffs = new HashSet<>();
-    private final File file = new File(mc.gameDir + separator + "expensive" + separator + "staffs.cfg");
+    private final File file = new File(mc.gameDir + separator + "astral" + separator + "staffs.cfg");
 
     @SneakyThrows
     public void load() {
