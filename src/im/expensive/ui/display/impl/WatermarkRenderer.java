@@ -30,8 +30,8 @@ public class WatermarkRenderer implements ElementRenderer {
     @Override
     public void render(EventDisplay eventDisplay) {
         MatrixStack ms = eventDisplay.getMatrixStack();
-        float posX = 500; // Позиция X
-        float posY = 200; // Позиция Y
+        float posX = 3; // Позиция X
+        float posY = 5; // Позиция Y
         float padding = 5; // Отступы
         float fontSize = 8f; // Размер текста
         float iconSize = 12; // Размер иконки
