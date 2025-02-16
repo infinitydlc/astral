@@ -96,7 +96,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Expensive {
     /*
-    бавеко пастерок ебучий и ваще чмо
+    пашел нахуй зiлiнскii
      */
 
     public static UserData userData;
