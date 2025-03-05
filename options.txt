@@ -23,18 +23,18 @@ fov:1.0
 screenEffectScale:1.0
 fovEffectScale:1.0
 gamma:1000.0
-renderDistance:2
+renderDistance:4
 entityDistanceScaling:1.0
 guiScale:2
 particles:2
 maxFps:260
 difficulty:2
-graphicsMode:1
+graphicsMode:0
 ao:2
 biomeBlendRadius:2
-renderClouds:true
-resourcePacks:[]
-incompatibleResourcePacks:[]
+renderClouds:false
+resourcePacks:["vanilla","file/bravorp #2"]
+incompatibleResourcePacks:["file/bravorp #2"]
 lastServer:PIDARAS_ZELENSKI.aternos.me:60369
 lang:en_us
 chatVisibility:0

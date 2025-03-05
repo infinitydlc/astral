@@ -60,6 +60,14 @@ public class KillAura extends Function {
             new BooleanSetting("Друзья", false),
             new BooleanSetting("Голые невидимки", true),
             new BooleanSetting("Невидимки", true));
+    private final BooleanSetting elytraTarget = new BooleanSetting("Элитра таргет", false);
+    private final SliderSetting elytraRotateDistance = new SliderSetting("Элитра дистанция ротации", 1.5f, 0.0f, 30.0f, 0.05f).setVisible(() -> elytraTarget.get());
+    private final SliderSetting elytraAttackDistance = new SliderSetting("Элитра дистанция атаки", 3.5f, 0.0f, 6.0f, 0.1f).setVisible(() -> elytraTarget.get());
+    private final BooleanSetting vector = new BooleanSetting("Elytra Vector", true).setVisible(() -> elytraTarget.get());
+    private final SliderSetting elytraVector = new SliderSetting("Дистанция Vector", 4.5f, 1, 6, 0.5f).setVisible(() -> vector.get() && elytraTarget.get());
+    private final BooleanSetting predictPosition = new BooleanSetting("Предсказывать позицию", false).setVisible(() -> elytraTarget.get());
+    private final SliderSetting predictTime = new SliderSetting("Время предсказания (секунды)", 0.5f, 0.1f, 1.0f, 0.1f).setVisible(() -> predictPosition.get());
+    private final BooleanSetting targetOnlyElytra = new BooleanSetting("Таргетить только элитры", false).setVisible(() -> elytraTarget.get());
 
     @Getter
     final ModeListSetting options = new ModeListSetting("Опции",
@@ -74,10 +82,10 @@ public class KillAura extends Function {
 
     @Getter
     private final StopWatch stopWatch = new StopWatch();
-    private Vector2f rotateVector = new Vector2f(0, 0);
+    public static Vector2f rotateVector = new Vector2f(0, 0);
     @Getter
-    private LivingEntity target;
-    private Entity selected;
+    public static LivingEntity target;
+    public Entity selected;
 
     int ticks = 0;
     boolean isRotated;
@@ -86,7 +94,7 @@ public class KillAura extends Function {
 
     public KillAura(AutoPotion autoPotion) {
         this.autoPotion = autoPotion;
-        addSettings(type, attackRange, targets, options, correctionType);
+        addSettings(type, attackRange, targets, options,elytraTarget,elytraRotateDistance,elytraAttackDistance,vector,elytraVector,predictPosition,predictTime,targetOnlyElytra, correctionType);
     }
 
     @Subscribe
@@ -101,7 +109,6 @@ public class KillAura extends Function {
         if (options.getValueByName("Фокусировать одну цель").get() && (target == null || !isValid(target)) || !options.getValueByName("Фокусировать одну цель").get()) {
             updateTarget();
         }
-
 
         if (target != null && !(autoPotion.isState() && autoPotion.isActive())) {
             isRotated = false;
@@ -121,7 +128,6 @@ public class KillAura extends Function {
                     updateRotation(false, 80, 35);
                 }
             }
-
         } else {
             stopWatch.setLastMS(0);
             reset();
@@ -147,6 +153,9 @@ public class KillAura extends Function {
 
         for (Entity entity : mc.world.getAllEntities()) {
             if (entity instanceof LivingEntity living && isValid(living)) {
+                if (elytraTarget.get() && targetOnlyElytra.get() && !living.isElytraFlying()) {
+                    continue;
+                }
                 targets.add(living);
             }
         }
@@ -185,8 +194,9 @@ public class KillAura extends Function {
     float lastYaw, lastPitch;
 
     private void updateRotation(boolean attack, float rotationYawSpeed, float rotationPitchSpeed) {
+        float rotateDistance = attackRange.get();
         Vector3d vec = target.getPositionVec().add(0, clamp(mc.player.getPosYEye() - target.getPosY(),
-                        0, target.getHeight() * (mc.player.getDistanceEyePos(target) / attackRange.get())), 0)
+                        0, target.getHeight() * (mc.player.getDistanceEyePos(target) / rotateDistance)), 0)
                 .subtract(mc.player.getEyePosition(1.0F));
 
         isRotated = true;
@@ -209,7 +219,6 @@ public class KillAura extends Function {
                     clampedPitch /= 3f;
                 }
 
-
                 if (Math.abs(clampedYaw - this.lastYaw) <= 3.0f) {
                     clampedYaw = this.lastYaw + 3.1f;
                 }
@@ -217,11 +226,9 @@ public class KillAura extends Function {
                 float yaw = rotateVector.x + (yawDelta > 0 ? clampedYaw : -clampedYaw);
                 float pitch = clamp(rotateVector.y + (pitchDelta > 0 ? clampedPitch : -clampedPitch), -89.0F, 89.0F);
 
-
                 float gcd = SensUtils.getGCDValue();
                 yaw -= (yaw - rotateVector.x) % gcd;
                 pitch -= (pitch - rotateVector.y) % gcd;
-
 
                 rotateVector = new Vector2f(yaw, pitch);
                 lastYaw = clampedYaw;
@@ -255,6 +262,10 @@ public class KillAura extends Function {
             updateRotation(true, 60, 35);
         }
 
+        if (mc.player.getDistance(target) > attackRange.get()) {
+            return;
+        }
+
         if ((selected == null || selected != target) && !mc.player.isElytraFlying()) {
             return;
         }
@@ -278,12 +289,12 @@ public class KillAura extends Function {
         float attackStrength = mc.player.getCooledAttackStrength(options.getValueByName("Синхронизировать атаку с ТПС").get()
                 ? Expensive.getInstance().getTpsCalc().getAdjustTicks() : 1.5f);
 
-        if (attackStrength < 0.92f) {
+        if (attackStrength < 0.9f) {
             return false;
         }
 
         if (!cancelReason && options.getValueByName("Только криты").get()) {
-            return !mc.player.isOnGround() && mc.player.fallDistance > 0;
+            return (!mc.player.isOnGround() && mc.player.fallDistance > 0);
         }
 
         return true;
@@ -293,7 +304,9 @@ public class KillAura extends Function {
         if (entity instanceof ClientPlayerEntity) return false;
 
         if (entity.ticksExisted < 3) return false;
-        if (mc.player.getDistanceEyePos(entity) > attackRange.get()) return false;
+
+        float rotateDistance = (elytraTarget.get() && mc.player.isElytraFlying()) ? elytraRotateDistance.get() : attackRange.get();
+        if (mc.player.getDistanceEyePos(entity) > rotateDistance) return false;
 
         if (entity instanceof PlayerEntity p) {
             if (AntiBot.isBot(entity)) {
@@ -322,6 +335,10 @@ public class KillAura extends Function {
             return false;
         }
         if (entity instanceof AnimalEntity && !targets.getValueByName("Животные").get()) {
+            return false;
+        }
+
+        if (elytraTarget.get() && targetOnlyElytra.get() && !entity.isElytraFlying()) {
             return false;
         }
 
@@ -356,7 +373,47 @@ public class KillAura extends Function {
         }
     }
 
+    private Vector3d predictTargetPosition(LivingEntity target, float predictTime) {
+        Vector3d currentPosition = target.getPositionVec();
+        Vector3d velocity = target.getMotion();
+        Vector3d acceleration = target.getMotion().subtract(target.motion).scale(1.0 / predictTime);
 
+        Vector3d predictedPosition = currentPosition.add(velocity.scale(predictTime)).add(acceleration.scale(0.5 * predictTime * predictTime));
+
+        return predictedPosition;
+    }
+
+    private void setPredictedRotation(Vector3d targetPosition) {
+        Vector3d playerPos = mc.player.getPositionVec();
+        Vector3d direction = targetPosition.subtract(playerPos).normalize();
+
+        float yaw = (float) Math.toDegrees(Math.atan2(direction.z, direction.x)) - 90.0f;
+        float pitch = (float) -Math.toDegrees(Math.atan2(direction.y, Math.hypot(direction.x, direction.z)));
+
+        rotateVector = new Vector2f(yaw, pitch);
+    }
+
+    private void upgradeElytraTarget(LivingEntity target, boolean attack) {
+        if (getDistance(target) > elytraVector.get()) {
+            Vector3d targetPos = target.getPositionVec();
+            Vector3d playerPos = mc.player.getPositionVec();
+            Vector3d direction = targetPos.subtract(playerPos).normalize();
+
+            // Увеличиваем угол поворота, чтобы игрок начал двигаться к цели
+            float yaw = (float) Math.toDegrees(Math.atan2(direction.z, direction.x)) - 90.0f;
+            float pitch = (float) -Math.toDegrees(Math.atan2(direction.y, Math.hypot(direction.x, direction.z)));
+
+            // Плавно корректируем угол поворота
+            rotateVector = new Vector2f(yaw, pitch);
+        } else {
+            // Если дистанция меньше или равна заданной, просто смотрим на цель
+            updateRotation(false, 80, 35);
+        }
+    }
+
+    private double getDistance(LivingEntity entity) {
+        return mc.player.getDistanceSq(entity);
+    }
     private void reset() {
         if (options.getValueByName("Коррекция движения").get()) {
             mc.player.rotationYawOffset = Integer.MIN_VALUE;
@@ -365,10 +422,11 @@ public class KillAura extends Function {
     }
 
     @Override
-    public void onEnable() {
+    public boolean onEnable() {
         super.onEnable();
         reset();
         target = null;
+        return false;
     }
 
     @Override

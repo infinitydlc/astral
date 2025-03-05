@@ -128,10 +128,11 @@ public class TargetStrafe extends Function {
     }
 
     @Override
-    public void onEnable() {
+    public boolean onEnable() {
         strafeMovement.setOldSpeed(0);
         target = null;
         super.onEnable();
+        return false;
     }
 
     private void handleEventAction(ActionEvent action) {

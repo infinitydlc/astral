@@ -51,11 +51,12 @@ public class MCScript {
 
              this.function = new Function(moduleClass.getModuleName()) {
                  @Override
-                 public void onEnable() {
+                 public boolean onEnable() {
                      LuaValue val = globals.get("onEnable");
                      if (val != LuaValue.NIL) {
                          val.call();
                      }
+                     return false;
                  }
 
                  @Subscribe

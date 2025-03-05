@@ -20,6 +20,7 @@ public class Vector3d implements IPosition
         return new Vector3d(d0, d1, d2);
     }
 
+
     /**
      * Copies the coordinates of an Int vector and centers them.
      */
@@ -39,9 +40,8 @@ public class Vector3d implements IPosition
     /**
      * Copies the coordinates of an int vector and centers them horizontally (x and z)
      */
-    public static Vector3d copyCenteredHorizontally(Vector3i toCopy)
-    {
-        return new Vector3d((double)toCopy.getX() + 0.5D, (double)toCopy.getY(), (double)toCopy.getZ() + 0.5D);
+    public static Vector3d copyCenteredHorizontally(Vector3i toCopy) {
+        return new Vector3d((double)toCopy.getX() + (double)0.5F, (double)toCopy.getY(), (double)toCopy.getZ() + (double)0.5F);
     }
 
     /**

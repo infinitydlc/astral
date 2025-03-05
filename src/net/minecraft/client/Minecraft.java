@@ -233,9 +233,9 @@ public class Minecraft extends RecursiveEventLoop<Runnable> implements ISnooperI
 
     public PlayerController playerController;
 
-    public ClientWorld world;
+    public static ClientWorld world;
 
-    public ClientPlayerEntity player;
+    public static ClientPlayerEntity player;
 
     @Nullable
     private IntegratedServer integratedServer;
@@ -481,7 +481,7 @@ public class Minecraft extends RecursiveEventLoop<Runnable> implements ISnooperI
         if (selfDestruct.unhooked) {
             this.mainWindow.setWindowTitle(getWindowTitle());
         } else {
-            this.mainWindow.setWindowTitle("Expensive 0.7 Release - dsc.gg/Expensivedlc");
+            this.mainWindow.setWindowTitle("Astral client #001 beta");
         }
     }
 
@@ -1831,6 +1831,7 @@ public class Minecraft extends RecursiveEventLoop<Runnable> implements ISnooperI
                            java.util.function.Function<SaveFormat.LevelSave, DatapackCodec> levelSaveToDatapackFunction,
                            Function4<SaveFormat.LevelSave, DynamicRegistries.Impl, IResourceManager, DatapackCodec, IServerConfiguration> quadFunction,
                            boolean vanillaOnly, WorldSelectionType selectionType) {
+
 
         SaveFormat.LevelSave saveformat$levelsave;
 

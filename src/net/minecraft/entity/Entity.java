@@ -3457,6 +3457,8 @@ public abstract class Entity implements INameable, ICommandSource {
         return "X: " + (int) this.getPosX() + " Y: " + (int) this.getPosY() + " Z: " + (int) this.getPosZ();
     }
 
+
+
     @FunctionalInterface
     public interface IMoveCallback {
         void accept(Entity p_accept_1_, double p_accept_2_, double p_accept_4_, double p_accept_6_);

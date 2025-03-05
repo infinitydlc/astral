@@ -16,6 +16,7 @@ import im.expensive.utils.text.GradientUtil;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -23,7 +24,6 @@ import net.minecraft.util.text.ITextComponent;
 public class KeyBindRenderer implements ElementRenderer {
 
     final Dragging dragging;
-
 
     float width;
     float height;
@@ -37,27 +37,42 @@ public class KeyBindRenderer implements ElementRenderer {
         float fontSize = 6.5f;
         float padding = 5;
 
-        ITextComponent name = GradientUtil.gradient("KeyBinds");
+        String name ="KeyBinds";
 
         Style style = Expensive.getInstance().getStyleManager().getCurrentStyle();
+        ResourceLocation backgroundTexture = new ResourceLocation("astral/images/hud/K.png");
 
-        DisplayUtils.drawShadow(posX, posY, width, height, 10, style.getFirstColor().getRGB(), style.getSecondColor().getRGB());
-        drawStyledRect(posX, posY, width, height, 4);
+        
+        drawStyledRect(posX, posY, width, height, 3);
+        posY += 1f;
+
         Scissor.push();
         Scissor.setFromComponentCoordinates(posX, posY, width, height);
-        Fonts.sfui.drawCenteredText(ms, name, posX + width / 2, posY + padding + 0.5f, fontSize);
+        Fonts.sfui.drawCenteredText(ms, name, posX  + 21, posY + padding + 0.5f, -1,fontSize);
+        DisplayUtils.drawImage(backgroundTexture, posX +width -13, posY + 5, 9, 8, ColorUtils.rgb(93, 84, 165));
 
         posY += fontSize + padding * 2;
 
         float maxWidth = Fonts.sfMedium.getWidth(name, fontSize) + padding * 2;
         float localHeight = fontSize + padding * 2;
 
-        DisplayUtils.drawRectHorizontalW(posX + 0.5f, posY, width - 1, 2.5f, 3, ColorUtils.rgba(0, 0, 0, (int) (255 * 0.25f)));
+        
         posY += 3f;
 
+        
         for (Function f : Expensive.getInstance().getFunctionRegistry().getFunctions()) {
             f.getAnimation().update();
             if (!(f.getAnimation().getValue() > 0) || f.getBind() == 0) continue;
+
+            
+            float bindRectX = posX + padding -2;
+            float bindRectY = posY - 3;
+            float bindRectWidth = width - padding * 1.4f;
+            float bindRectHeight = fontSize + padding +1;
+
+            
+            DisplayUtils.drawRoundedRect(bindRectX, bindRectY, bindRectWidth, bindRectHeight, 0.5f, ColorUtils.rgba(21, 21, 31, 255));
+
             String nameText = f.getName();
             float nameWidth = Fonts.sfMedium.getWidth(nameText, fontSize);
 
@@ -66,8 +81,9 @@ public class KeyBindRenderer implements ElementRenderer {
 
             float localWidth = nameWidth + bindWidth + padding * 3;
 
-            Fonts.sfMedium.drawText(ms, nameText, posX + padding, posY + 0.5f, ColorUtils.rgba(210, 210, 210, (int) (255 * f.getAnimation().getValue())), fontSize);
-            Fonts.sfMedium.drawText(ms, bindText, posX + width - padding - bindWidth, posY + 0.5f, ColorUtils.rgba(210, 210, 210, (int) (255 * f.getAnimation().getValue())), fontSize);
+            
+            Fonts.sfMedium.drawText(ms, nameText, posX + padding + 2 -2.5f, posY + 0.5f, ColorUtils.rgba(210, 210, 210, (int) (255 * f.getAnimation().getValue())), fontSize);
+            Fonts.sfMedium.drawText(ms, bindText, posX + width - padding - bindWidth - 2, posY + 0.5f, ColorUtils.rgba(210, 210, 210, (int) (255 * f.getAnimation().getValue())), fontSize);
 
             if (localWidth > maxWidth) {
                 maxWidth = localWidth;
@@ -76,21 +92,19 @@ public class KeyBindRenderer implements ElementRenderer {
             posY += (float) ((fontSize + padding) * f.getAnimation().getValue());
             localHeight += (float) ((fontSize + padding) * f.getAnimation().getValue());
         }
+
         Scissor.unset();
         Scissor.pop();
+
         width = Math.max(maxWidth, 80);
         height = localHeight + 2.5f;
         dragging.setWidth(width);
         dragging.setHeight(height);
     }
 
-    private void drawStyledRect(float x,
-                                float y,
-                                float width,
-                                float height,
-                                float radius) {
-
-        DisplayUtils.drawRoundedRect(x - 0.5f, y - 0.5f, width + 1, height + 1, radius + 0.5f, ColorUtils.getColor(0)); // outline
-        DisplayUtils.drawRoundedRect(x, y, width, height, radius, ColorUtils.rgba(21, 21, 21, 255));
+    private void drawStyledRect(float x, float y, float width, float height, float radius) {
+        DisplayUtils.drawShadow(x, y, width, height, (int) (radius * 2f), ColorUtils.rgba(25, 25, 31, 120));
+        DisplayUtils.drawRoundedRect(x - 0.5f, y - 0.5f, width + 1, height +1, radius, ColorUtils.rgba(32, 41, 83,255));
+        DisplayUtils.drawRoundedRect(x, y, width, height, radius, ColorUtils.rgba(25, 25, 31,255));
     }
 }

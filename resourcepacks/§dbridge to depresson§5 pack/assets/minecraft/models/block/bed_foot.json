@@ -1,0 +1,54 @@
+{
+    "__comment": "Model generated using MrCrayfish's Model Creator (https://mrcrayfish.com/tools?id=mc)",
+    "textures": {
+        "particle": "minecraft:blocks/planks_oak",
+        "texture": "minecraft:blocks/mrsdnajaba"
+    },
+    "display": {
+        "gui": {
+            "rotation": [ 30, 45, 0 ],
+            "translation": [ 0, 0, 0 ],
+            "scale": [ 0.625, 0.625, 0.625 ]
+        },
+        "ground": {
+            "rotation": [ 0, 0, 0 ],
+            "translation": [ 0, 3, 0 ],
+            "scale": [ 0.25, 0.25, 0.25 ]
+        },
+        "fixed": {
+            "rotation": [ 0, 180, 0 ],
+            "translation": [ 0, 0, 0 ],
+            "scale": [ 1, 1, 1 ]
+        },
+        "head": {
+            "rotation": [ 0, 180, 0 ],
+            "translation": [ 0, 0, 0 ],
+            "scale": [ 1, 1, 1 ]
+        },
+        "firstperson_righthand": {
+            "rotation": [ 0, 315, 0 ],
+            "translation": [ 0, 2.5, 0 ],
+            "scale": [ 0.4, 0.4, 0.4 ]
+        },
+        "thirdperson_righthand": {
+            "rotation": [ 75, 315, 0 ],
+            "translation": [ 0, 2.5, 0 ],
+            "scale": [ 0.375, 0.375, 0.375 ]
+        }
+    },
+    "elements": [
+        {
+            "name": "Element",
+            "from": [ 7.5, 2.938, 9 ], 
+            "to": [ 7.562, 3, 9.062 ], 
+            "faces": {
+                "north": { "texture": "#texture", "uv": [ 14, 0, 16, 2 ] },
+                "east": { "texture": "#texture", "uv": [ 10, 0, 12, 2 ], "rotation": 270 },
+                "south": { "texture": "#texture", "uv": [ 14, 0, 16, 2 ] },
+                "west": { "texture": "#texture", "uv": [ 12, 0, 14, 2 ], "rotation": 90 },
+                "up": { "texture": "#texture", "uv": [ 1, 0, 3, 2 ], "rotation": 180 },
+                "down": { "texture": "#texture", "uv": [ 16, 2, 14, 0 ], "rotation": 180 }
+            }
+        }
+    ]
+}

@@ -16,6 +16,7 @@ import im.expensive.utils.player.InventoryUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.EnderCrystalEntity;
 import net.minecraft.entity.item.TNTEntity;
 import net.minecraft.entity.item.minecart.TNTMinecartEntity;
@@ -37,319 +38,134 @@ import java.util.stream.IntStream;
 
 @FunctionRegister(name = "AutoTotem", type = Category.Combat)
 public class AutoTotem extends Function {
-    private final ModeSetting totemMode = new ModeSetting("Мод", "Обычный", "Обычный", "Funtime");
-    private final SliderSetting health = new SliderSetting("Здоровье", 3.5f, 1.f, 20.f, 0.05f);
+    private final SliderSetting health = new SliderSetting("Здоровье", 3.5f, 1.0f, 20.0f, 0.5f);
     private final BooleanSetting swapBack = new BooleanSetting("Возвращать предмет", true);
     private final BooleanSetting noBallSwitch = new BooleanSetting("Не брать если шар в руке", false);
-    private final BooleanSetting saveEnchanted = new BooleanSetting("Сохранять зачарованные", true);
-    int nonEnchantedTotems;
-
-
-    private final ModeListSetting mode = new ModeListSetting("Учитывать", new BooleanSetting("Золотые сердца", true),
+    private final ModeListSetting mode = new ModeListSetting("Срабатывать", new BooleanSetting("Золотые сердца", true),
             new BooleanSetting("Кристаллы", true),
+            new BooleanSetting("Обсидиан", false),
             new BooleanSetting("Якорь", false),
-            new BooleanSetting("Падение", false));
+            new BooleanSetting("Падение", true),
+            new BooleanSetting("Кристалл в руке", true),
+            new BooleanSetting("Здоровье на элитре", true));
+    private final SliderSetting radiusExplosion = new SliderSetting("Дистанция до кристала", 6.0f, 1.0f, 8.0f, 1.0f).setVisible(() -> mode.getValueByName("Кристаллы").get());
+    private final SliderSetting radiusObs = new SliderSetting("Дистанция до обсидиана", 6.0f, 1.0f, 8.0f, 1.0f).setVisible(() -> mode.getValueByName("Обсидиан").get());
+    private final SliderSetting radiusAnch = new SliderSetting("Дистанция до якоря", 6.0f, 1.0f, 8.0f, 1.0f).setVisible(() -> mode.getValueByName("Якорь").get());
+    private final SliderSetting HPElytra = new SliderSetting("Брать по здоровью на элитре", 6.0f, 1.0f, 20.0f, 0.5f).setVisible(() -> mode.getValueByName("Здоровье на элитре").get());
+    private final SliderSetting DistanceFall = new SliderSetting("Дистанция падения", 20.0f, 3.0f, 50.0f, 0.5f).setVisible(() -> mode.getValueByName("Падение").get());
 
     int oldItem = -1;
     public boolean isActive;
     StopWatch stopWatch = new StopWatch();
 
-
     private Item backItem = Items.AIR;
     private ItemStack backItemStack;
 
     public AutoTotem() {
-        addSettings(totemMode, health, swapBack, saveEnchanted, noBallSwitch, mode);
-    }
-
-
-    private int itemInMouse = -1;
-    private int totemCount = 0;
-    private boolean totemIsUsed;
-
-    @Subscribe
-    private void onSpawnEntity(EventSpawnEntity spawnEntity) {
-        if (spawnEntity.getEntity() instanceof EnderCrystalEntity entity && mode.getValueByName("Кристаллы").get()) {
-            if (entity.getDistance(mc.player) <= 6.0F) {
-                this.swapToTotem();
-            }
-        }
+        addSettings(health, swapBack, noBallSwitch, mode, radiusExplosion, radiusObs, radiusAnch, HPElytra, DistanceFall);
     }
 
     @Subscribe
     private void onUpdate(EventUpdate e) {
-        totemCount = countTotems(true);
-        switch (totemMode.get()) {
-            case "Обычный" -> {
-                this.nonEnchantedTotems = (int) IntStream.range(0, 36).mapToObj((i) -> mc.player.inventory.getStackInSlot(i)).filter((s) -> s.getItem() == Items.TOTEM_OF_UNDYING && !s.isEnchanted()).count();
+        if (shouldToSwapTotem()) {
+            int slot = getSlotInInventory(Items.TOTEM_OF_UNDYING);
+            boolean handNotNull = !(mc.player.getHeldItemOffhand().getItem() instanceof AirItem);
 
-                int slot = getSlotInInventory(Items.TOTEM_OF_UNDYING);
-
-                boolean handNotNull = !(mc.player.getHeldItemOffhand().getItem() instanceof AirItem);
-
-
-                if (shouldToSwapTotem()) {
-                    if (slot != -1 && !isTotemInHands()) {
-                        InventoryUtil.moveItem(slot, 45, handNotNull);
-                        if (handNotNull && oldItem == -1) {
-                            oldItem = slot;
-                        }
-                    }
-                } else if (oldItem != -1 && swapBack.get()) {
-                    InventoryUtil.moveItem(oldItem, 45, handNotNull);
-                    oldItem = -1;
+            if (slot != -1 && !isTotemInHands()) {
+                InventoryUtil.moveItem(slot, 45, handNotNull);
+                if (handNotNull && oldItem == -1) {
+                    oldItem = slot;
                 }
             }
-            case "Funtime" -> {
-                if (shouldToSwapTotem()) {
-                    if (itemIsHand(Items.TOTEM_OF_UNDYING)) {
-                        return;
-                    }
-                    swapToTotem();
-                }
-                this.swapBack();
-            }
+        } else if (oldItem != -1 && swapBack.get()) {
+            InventoryUtil.moveItem(oldItem, 45, !(mc.player.getHeldItemOffhand().getItem() instanceof AirItem));
+            oldItem = -1;
         }
-    }
-
-    @Subscribe
-    private void onPacket(EventPacket e) {
-        if (e.isReceive()) {
-            if (e.getPacket() instanceof SEntityStatusPacket statusPacket && statusPacket.getOpCode() == 35 && statusPacket.getEntity(mc.world) == mc.player) {
-                this.totemIsUsed = true;
-            }
-        }
-    }
-
-    private void swapBack() {
-        if (this.stopWatch.isReached(400) && this.itemIsBack()) {
-            this.itemInMouse = -1;
-            this.backItem = Items.AIR;
-            this.backItemStack = null;
-            this.stopWatch.reset();
-        }
-    }
-
-    private boolean itemIsBack() {
-        if (mc.player.getHeldItemOffhand().getItem() == Items.TOTEM_OF_UNDYING && this.itemInMouse != -1 && this.backItem != Items.AIR) {
-            ItemStack itemStack = mc.player.container.getSlot(this.itemInMouse).getStack();
-            boolean offHandAreEqual = itemStack != ItemStack.EMPTY && !ItemStack.areItemStacksEqual(itemStack, this.backItemStack);
-            int oldItem = findItemSlotIndex(backItemStack, backItem);
-
-            if (oldItem < 9 && oldItem != -1) {
-                oldItem = oldItem + 36;
-            }
-
-
-            int containerId = mc.player.container.windowId;
-
-            if (mc.player.inventory.getItemStack().getItem() != Items.AIR) {
-                mc.playerController.windowClick(containerId, 45, 0, ClickType.PICKUP, mc.player);
-                this.backItemInMouse();
-                return false;
-            }
-
-            if (oldItem == -1) {
-                return false;
-            }
-
-            mc.playerController.windowClick(containerId, oldItem, 0, ClickType.PICKUP, mc.player);
-            mc.playerController.windowClick(containerId, 45, 0, ClickType.PICKUP, mc.player);
-            if (this.itemInMouse != -1) {
-                if (!offHandAreEqual) {
-                    mc.playerController.windowClick(containerId, this.itemInMouse, 0, ClickType.PICKUP, mc.player);
-                } else {
-                    int emptySlot = getEmptySlot(false);
-                    if (emptySlot != -1) {
-                        mc.playerController.windowClick(containerId, emptySlot, 0, ClickType.PICKUP, mc.player);
-                    }
-                }
-            }
-        }
-        return true;
-    }
-
-    public static int getEmptySlot(boolean hotBar) {
-        for (int i = hotBar ? 0 : 9; i < (hotBar ? 9 : 45); ++i) {
-            if (!mc.player.inventory.getStackInSlot(i).isEmpty()) continue;
-            return i;
-        }
-        return -1;
-    }
-
-    public int findItemSlotIndex(ItemStack targetItemStack, Item targetItem) {
-        if (targetItemStack == null) {
-            return -1;
-        }
-
-        for (int i = 0; i < 45; ++i) {
-            ItemStack currentStack = mc.player.inventory.getStackInSlot(i);
-
-            if (ItemStack.areItemStacksEqual(currentStack, targetItemStack) && currentStack.getItem() == targetItem) {
-                return i;
-            }
-        }
-
-        return -1;
-    }
-
-
-    public boolean itemIsHand(Item item) {
-        for (Hand enumHand : Hand.values()) {
-            if (mc.player.getHeldItem(enumHand).getItem() != item) continue;
-            return true;
-        }
-        return false;
-    }
-
-    private void swapToTotem() {
-        int totemSlot = getSlotInInventory(Items.TOTEM_OF_UNDYING);
-        this.stopWatch.reset();
-        Item mainHandItem = mc.player.getHeldItemOffhand().getItem();
-
-        if (mainHandItem == Items.TOTEM_OF_UNDYING) {
-            return;
-        }
-
-        if (totemSlot == -1 && !isCurrentItem(Items.TOTEM_OF_UNDYING)) {
-            return;
-        }
-
-
-        if (this.itemInMouse == -1) {
-            this.itemInMouse = totemSlot;
-            this.backItem = mainHandItem;
-            this.backItemStack = mc.player.getHeldItemOffhand().copy();
-        }
-        mc.playerController.windowClick(mc.player.container.windowId, totemSlot, 1, ClickType.PICKUP, mc.player);
-        mc.playerController.windowClick(mc.player.container.windowId, 45, 1, ClickType.PICKUP, mc.player);
-
-        if (this.totemCount > 1 && this.totemIsUsed) {
-            this.backItemInMouse();
-            this.totemIsUsed = false;
-        }
-        this.backItemInMouse();
-    }
-
-    public int countTotems(boolean includeEnchanted) {
-        long totemCount = 0L;
-        int inventorySize = AutoTotem.mc.player.inventory.getSizeInventory();
-
-        for (int slotIndex = 0; slotIndex < inventorySize; ++slotIndex) {
-            ItemStack slotStack = AutoTotem.mc.player.inventory.getStackInSlot(slotIndex);
-
-            if (slotStack.getItem() == Items.TOTEM_OF_UNDYING && (includeEnchanted || !slotStack.isEnchanted())) {
-                ++totemCount;
-            }
-        }
-
-        return (int) totemCount;
-    }
-
-    private void backItemInMouse() {
-        if (this.itemInMouse != -1) {
-            mc.playerController.windowClick(mc.player.container.windowId, this.itemInMouse, 0, ClickType.PICKUP, mc.player);
-        }
-    }
-
-    public static boolean isCurrentItem(Item item) {
-        return mc.player.inventory.getItemStack().getItem() == item;
-    }
-
-    private boolean isTotemInHands() {
-        Hand[] hands = Hand.values();
-
-        for (Hand hand : hands) {
-            ItemStack heldItem = mc.player.getHeldItem(hand);
-            if (heldItem.getItem() == Items.TOTEM_OF_UNDYING && !this.isSaveEnchanted(heldItem)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private boolean isSaveEnchanted(ItemStack itemStack) {
-        return this.saveEnchanted.get() && itemStack.isEnchanted() && this.nonEnchantedTotems > 0;
     }
 
     private boolean shouldToSwapTotem() {
-        final float absorptionAmount = mc.player.isPotionActive(Effects.ABSORPTION) ? mc.player.getAbsorptionAmount() : 0.0f;
-        float currentHealth = mc.player.getHealth();
+        float absorption = mc.player.isPotionActive(Effects.ABSORPTION) ? mc.player.getAbsorptionAmount() : 0.0f;
+        float currentHealth = mc.player.getHealth() + (mode.getValueByName("Золотые сердца").get() ? absorption : 0.0f);
 
-        if (mode.getValueByName("Золотые сердца").get()) {
-            currentHealth += absorptionAmount;
+        if (currentHealth <= health.get()) {
+            return true;
         }
 
-
-        if (!isOffhandItemBall()) {
-            if (isInDangerousSituation()) {
-                return true;
-            }
+        if (!isBall()) {
+            if (checkCrystal()) return true;
+            if (checkObsidian()) return true;
+            if (checkAnchor()) return true;
+            if (checkPlayerCrystal()) return true;
         }
 
-
-        return currentHealth <= this.health.get();
+        if (checkHPElytra()) return true;
+        return checkFall();
     }
-
-    private boolean isInDangerousSituation() {
-        return checkCrystal() || checkAnchor() || checkFall();
-    }
-
-    private boolean checkFall() {
-        if (!this.mode.getValueByName("Падение").get()) {
-            return false;
-        }
-        if (mc.player.isInWater()) {
-            return false;
-        }
-
-        if (mc.player.isElytraFlying()) {
-            return false;
-        }
-
-        return mc.player.fallDistance > 10.0f;
-    }
-
-
-    private boolean checkAnchor() {
-        if (!mode.getValueByName("Якорь").get()) return false;
-
-        return getBlock(6.0F, Blocks.RESPAWN_ANCHOR) != null;
-    }
-
 
     private boolean checkCrystal() {
-        if (!mode.getValueByName("Кристаллы").get()) {
-            return false;
-        }
+        if (!mode.getValueByName("Кристаллы").get()) return false;
 
         for (Entity entity : mc.world.getAllEntities()) {
-            if (isDangerousEntityNearPlayer(entity)) {
+            if ((entity instanceof EnderCrystalEntity || entity instanceof TNTEntity || entity instanceof TNTMinecartEntity) &&
+                    mc.player.getDistance(entity) <= radiusExplosion.get()) {
                 return true;
             }
         }
         return false;
     }
 
-    private boolean isOffhandItemBall() {
-        boolean isFallingConditionMet = this.mode.getValueByName("Падение").get() && mc.player.fallDistance > 5.0f;
+    private boolean checkObsidian() {
+        if (!mode.getValueByName("Обсидиан").get()) return false;
+        return getBlock(radiusObs.get(), Blocks.OBSIDIAN) != null;
+    }
 
-        if (isFallingConditionMet) {
-            return false;
+    private boolean checkAnchor() {
+        if (!mode.getValueByName("Якорь").get()) return false;
+        return getBlock(radiusAnch.get(), Blocks.RESPAWN_ANCHOR) != null;
+    }
+
+    private boolean checkPlayerCrystal() {
+        if (!mode.getValueByName("Кристалл в руке").get()) return false;
+
+        for (LivingEntity entity : mc.world.getPlayers()) {
+            if (entity != mc.player && (entity.getHeldItemOffhand().getItem() == Items.END_CRYSTAL ||
+                    entity.getHeldItemMainhand().getItem() == Items.END_CRYSTAL) &&
+                    mc.player.getDistance(entity) <= 6.0f) {
+                return true;
+            }
         }
-        return this.noBallSwitch.get() && mc.player.getHeldItemOffhand().getItem() == Items.PLAYER_HEAD;
+        return false;
     }
 
-    private boolean isDangerousEntityNearPlayer(Entity entity) {
-        return (entity instanceof TNTEntity || entity instanceof TNTMinecartEntity) && mc.player.getDistance(entity) <= 6.0F;
+    private boolean checkHPElytra() {
+        if (!mode.getValueByName("Здоровье на элитре").get()) return false;
+        return mc.player.inventory.armorInventory.get(2).getItem() == Items.ELYTRA &&
+                mc.player.getHealth() <= HPElytra.get();
     }
 
-    private final BlockPos getBlock(float distance, Block block) {
-        return getSphere(getPlayerPosLocal(), distance, 6, false, true, 0).stream().filter(position -> mc.world.getBlockState(position).getBlock() == block).min(Comparator.comparing(blockPos -> getDistanceOfEntityToBlock(mc.player, blockPos))).orElse(null);
+    private boolean checkFall() {
+        if (!mode.getValueByName("Падение").get()) return false;
+        return mc.player.fallDistance > DistanceFall.get();
     }
 
-    private final List<BlockPos> getSphere(final BlockPos center, final float radius, final int height, final boolean hollow, final boolean fromBottom, final int yOffset) {
+    private boolean isBall() {
+        if (mode.getValueByName("Падение").get() && mc.player.fallDistance > 5.0f) return false;
+        return noBallSwitch.get() && mc.player.getHeldItemOffhand().getItem() == Items.PLAYER_HEAD;
+    }
+
+    private boolean isTotemInHands() {
+        return mc.player.getHeldItemOffhand().getItem() == Items.TOTEM_OF_UNDYING ||
+                mc.player.getHeldItemMainhand().getItem() == Items.TOTEM_OF_UNDYING;
+    }
+
+    private BlockPos getBlock(float distance, Block block) {
+        return getSphere(getPlayerPosLocal(), distance, 6, false, true, 0).stream()
+                .filter(pos -> mc.world.getBlockState(pos).getBlock() == block)
+                .min(Comparator.comparing(pos -> getDistanceOfEntityToBlock(mc.player, pos)))
+                .orElse(null);
+    }
+
+    private List<BlockPos> getSphere(BlockPos center, float radius, int height, boolean hollow, boolean fromBottom, int yOffset) {
         List<BlockPos> positions = new ArrayList<>();
         int centerX = center.getX();
         int centerY = center.getY();
@@ -357,8 +173,8 @@ public class AutoTotem extends Function {
 
         for (int x = centerX - (int) radius; x <= centerX + radius; x++) {
             for (int z = centerZ - (int) radius; z <= centerZ + radius; z++) {
-                int yStart = fromBottom ? (centerY - (int) radius) : centerY;
-                int yEnd = fromBottom ? (centerY + (int) radius) : (centerY + height);
+                int yStart = fromBottom ? centerY - (int) radius : centerY;
+                int yEnd = fromBottom ? centerY + (int) radius : centerY + height;
 
                 for (int y = yStart; y < yEnd; y++) {
                     if (isPositionWithinSphere(centerX, centerY, centerZ, x, y, z, radius, hollow)) {
@@ -367,27 +183,15 @@ public class AutoTotem extends Function {
                 }
             }
         }
-
         return positions;
     }
 
-    private final BlockPos getPlayerPosLocal() {
-        if (mc.player == null) {
-            return BlockPos.ZERO;
-        }
+    private BlockPos getPlayerPosLocal() {
         return new BlockPos(Math.floor(mc.player.getPosX()), Math.floor(mc.player.getPosY()), Math.floor(mc.player.getPosZ()));
     }
 
-    private final double getDistanceOfEntityToBlock(final Entity entity, final BlockPos blockPos) {
-        return getDistance(entity.getPosX(), entity.getPosY(), entity.getPosZ(), blockPos.getX(), blockPos.getY(), blockPos.getZ());
-    }
-
-
-    private final double getDistance(final double n, final double n2, final double n3, final double n4, final double n5, final double n6) {
-        final double n7 = n - n4;
-        final double n8 = n2 - n5;
-        final double n9 = n3 - n6;
-        return MathHelper.sqrt(n7 * n7 + n8 * n8 + n9 * n9);
+    private double getDistanceOfEntityToBlock(Entity entity, BlockPos blockPos) {
+        return MathHelper.sqrt(entity.getDistanceSq(blockPos.getX(), blockPos.getY(), blockPos.getZ()));
     }
 
     private static boolean isPositionWithinSphere(int centerX, int centerY, int centerZ, int x, int y, int z, float radius, boolean hollow) {
@@ -395,31 +199,19 @@ public class AutoTotem extends Function {
         return distanceSq < Math.pow(radius, 2) && (!hollow || distanceSq >= Math.pow(radius - 1.0f, 2));
     }
 
-    public int getSlotInInventory(Item item) {
-        int slot = -1;
-
-        for (int i = 0; i < 36; ++i) {
-            ItemStack itemStack = mc.player.inventory.getStackInSlot(i);
-            if (itemStack.getItem() == Items.TOTEM_OF_UNDYING && !this.isSaveEnchanted(itemStack)) {
-                slot = adjustSlotNumber(i);
-                break;
+    private int getSlotInInventory(Item item) {
+        for (int i = 0; i < 36; i++) {
+            ItemStack stack = mc.player.inventory.getStackInSlot(i);
+            if (stack.getItem() == item) {
+                return i < 9 ? i + 36 : i;
             }
         }
-
-        return slot;
-    }
-
-    private int adjustSlotNumber(int slot) {
-        return slot < 9 ? slot + 36 : slot;
-    }
-
-    private void reset() {
-        this.oldItem = -1;
+        return -1;
     }
 
     @Override
     public void onDisable() {
-        reset();
+        oldItem = -1;
         super.onDisable();
     }
 }

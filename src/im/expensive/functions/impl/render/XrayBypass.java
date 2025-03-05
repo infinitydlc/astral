@@ -11,7 +11,6 @@ import im.expensive.functions.api.FunctionRegister;
 import im.expensive.functions.settings.impl.BooleanSetting;
 import im.expensive.functions.settings.impl.ModeListSetting;
 import im.expensive.functions.settings.impl.SliderSetting;
-import im.expensive.ui.dropdown.components.settings.MultiBoxComponent;
 import im.expensive.utils.render.ColorUtils;
 import im.expensive.utils.render.DisplayUtils;
 import im.expensive.utils.render.font.Fonts;
@@ -21,7 +20,6 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.optifine.render.RenderUtils;
 
-import java.util.Collections;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -69,7 +67,7 @@ public class XrayBypass extends Function {
     }
 
     @Override
-    public void onEnable() {
+    public boolean onEnable() {
         super.onEnable();
         waiting = removeEveryOther(getBlocks(), skip.get().intValue());
         thread = new Thread(() -> {
@@ -87,6 +85,7 @@ public class XrayBypass extends Function {
             }
         });
         thread.start();
+        return false;
     }
 
     private int isValid(BlockPos pos) {

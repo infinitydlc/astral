@@ -88,14 +88,15 @@ public class FreeCam extends Function {
     }
 
     @Override
-    public void onEnable() {
+    public boolean onEnable() {
         if (mc.player == null) {
-            return;
+            return false;
         }
         clientPosition = mc.player.getPositionVec();
         spawnFakePlayer();
 
         super.onEnable();
+        return false;
     }
 
     @Override

@@ -27,7 +27,7 @@ public class SelfDestruct extends Function {
     public StopWatch stopWatch = new StopWatch();
 
     @Override
-    public void onEnable() {
+    public boolean onEnable() {
         super.onEnable();
         process();
         print("Что бы вернуть чит напишите в чат " + TextFormatting.RED + secret);
@@ -47,6 +47,7 @@ public class SelfDestruct extends Function {
 
         unhooked = true;
 
+        return false;
     }
 
     public List<Function> saved = new ArrayList<>();

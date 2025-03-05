@@ -1,0 +1,103 @@
+---- Minecraft Crash Report ----
+// Why did you do that?
+
+Time: 28.02.2025, 23:54
+Description: Ticking entity
+
+java.lang.ArrayIndexOutOfBoundsException: Index 2 out of bounds for length 2
+	at java.base/java.util.Arrays$ArrayList.get(Arrays.java:4165)
+	at net.minecraft.util.NonNullList.get(NonNullList.java:49)
+	at net.minecraft.entity.LivingEntity.getItemInHand(LivingEntity.java:2333)
+	at net.minecraft.entity.LivingEntity.func_241354_r_(LivingEntity.java:2268)
+	at net.minecraft.entity.LivingEntity.func_241353_q_(LivingEntity.java:2250)
+	at net.minecraft.entity.LivingEntity.tick(LivingEntity.java:2152)
+	at net.minecraft.entity.MobEntity.tick(MobEntity.java:404)
+	at net.minecraft.entity.monster.ZombieEntity.tick(ZombieEntity.java:260)
+	at net.minecraft.world.server.ServerWorld.updateEntity(ServerWorld.java:749)
+	at net.minecraft.world.World.guardEntityTick(World.java:556)
+	at net.minecraft.world.server.ServerWorld.tick(ServerWorld.java:476)
+	at net.minecraft.server.MinecraftServer.updateTimeLightAndEntities(MinecraftServer.java:1010)
+	at net.minecraft.server.MinecraftServer.tick(MinecraftServer.java:937)
+	at net.minecraft.server.integrated.IntegratedServer.tick(IntegratedServer.java:106)
+	at net.minecraft.server.MinecraftServer.func_240802_v_(MinecraftServer.java:743)
+	at net.minecraft.server.MinecraftServer.lambda$func_240784_a_$0(MinecraftServer.java:234)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+
+
+A detailed walkthrough of the error, its code path and all known details is as follows:
+---------------------------------------------------------------------------------------
+
+-- Head --
+Thread: Server thread
+Stacktrace:
+	at java.base/java.util.Arrays$ArrayList.get(Arrays.java:4165)
+	at net.minecraft.util.NonNullList.get(NonNullList.java:49)
+	at net.minecraft.entity.LivingEntity.getItemInHand(LivingEntity.java:2333)
+	at net.minecraft.entity.LivingEntity.func_241354_r_(LivingEntity.java:2268)
+	at net.minecraft.entity.LivingEntity.func_241353_q_(LivingEntity.java:2250)
+	at net.minecraft.entity.LivingEntity.tick(LivingEntity.java:2152)
+	at net.minecraft.entity.MobEntity.tick(MobEntity.java:404)
+	at net.minecraft.entity.monster.ZombieEntity.tick(ZombieEntity.java:260)
+	at net.minecraft.world.server.ServerWorld.updateEntity(ServerWorld.java:749)
+
+-- Entity being ticked --
+Details:
+	Entity Type: minecraft:zombie (net.minecraft.entity.monster.ZombieEntity)
+	Entity ID: 1
+	Entity Name: Zombie
+	Entity's Exact location: -237.50, 36.00, 231.50
+	Entity's Block location: World: (-238,36,231), Chunk: (at 2,2,7 in -15,14; contains blocks -240,0,224 to -225,255,239), Region: (-1,0; contains chunks -32,0 to -1,31, blocks -512,0,0 to -1,255,511)
+	Entity's Momentum: 0.00, -0.08, 0.00
+	Entity's Passengers: []
+	Entity's Vehicle: ~~ERROR~~ NullPointerException: Cannot invoke "net.minecraft.entity.Entity.toString()" because the return value of "net.minecraft.entity.Entity.getRidingEntity()" is null
+Stacktrace:
+	at net.minecraft.world.World.guardEntityTick(World.java:556)
+	at net.minecraft.world.server.ServerWorld.tick(ServerWorld.java:476)
+
+-- Affected level --
+Details:
+	All players: 0 total; []
+	Chunk stats: ServerChunkCache: 2025
+	Level dimension: minecraft:overworld
+	Level spawn location: World: (-240,69,224), Chunk: (at 0,4,0 in -15,14; contains blocks -240,0,224 to -225,255,239), Region: (-1,0; contains chunks -32,0 to -1,31, blocks -512,0,0 to -1,255,511)
+	Level time: 578673 game time, 578673 day time
+	Level name: New World
+	Level game mode: Game mode: creative (ID 1). Hardcore: false. Cheats: true
+	Level weather: Rain time: 104900 (now: false), thunder time: 133848 (now: false)
+	Known server brands: vanilla
+	Level was modded: true
+	Level storage version: 0x04ABD - Anvil
+Stacktrace:
+	at net.minecraft.server.MinecraftServer.updateTimeLightAndEntities(MinecraftServer.java:1010)
+	at net.minecraft.server.MinecraftServer.tick(MinecraftServer.java:937)
+	at net.minecraft.server.integrated.IntegratedServer.tick(IntegratedServer.java:106)
+	at net.minecraft.server.MinecraftServer.func_240802_v_(MinecraftServer.java:743)
+	at net.minecraft.server.MinecraftServer.lambda$func_240784_a_$0(MinecraftServer.java:234)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+
+-- System Details --
+Details:
+	Minecraft Version: 1.16.5
+	Minecraft Version ID: 1.16.5
+	Operating System: Windows 11 (amd64) version 10.0
+	Java Version: 17.0.13, Amazon.com Inc.
+	Java VM Version: OpenJDK 64-Bit Server VM (mixed mode, sharing), Amazon.com Inc.
+	Memory: 145455128 bytes (138 MB) / 497025024 bytes (474 MB) up to 4282384384 bytes (4084 MB)
+	CPUs: 6
+	JVM Flags: 0 total; 
+	Player Count: 0 / 8; []
+	Data Packs: vanilla
+	Type: Integrated Server (map_client.txt)
+	Is Modded: Very likely; Jar signature invalidated
+	OptiFine Version: OptiFine_1.16.5_HD_U_G8
+	OptiFine Build: ~~NULL~~
+	Render Distance Chunks: 2
+	Mipmaps: 4
+	Anisotropic Filtering: 1
+	Antialiasing: 0
+	Multitexture: false
+	Shaders: null
+	OpenGlVersion: 4.6.0 NVIDIA 572.16
+	OpenGlRenderer: NVIDIA GeForce GTX 1050 Ti/PCIe/SSE2
+	OpenGlVendor: NVIDIA Corporation
+	CpuCount: 6

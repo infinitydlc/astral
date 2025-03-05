@@ -45,9 +45,10 @@ public abstract class Function implements IMinecraft {
         this.settings.addAll(List.of(settings));
     }
 
-    public void onEnable() {
+    public boolean onEnable() {
         animation.animate(1, 0.25f, Easings.CIRC_OUT);
         Expensive.getInstance().getEventBus().register(this);
+        return false;
     }
 
     public void onDisable() {

@@ -26,9 +26,10 @@ public class Timer extends Function {
     }
 
     @Override
-    public void onEnable() {
+    public boolean onEnable() {
         super.onEnable();
         reset();
+        return false;
     }
 
     @Override

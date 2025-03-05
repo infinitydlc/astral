@@ -156,7 +156,6 @@ public interface IWorldReader extends IBlockDisplayReader, ICollisionReader, Bio
     }
 
     @Deprecated
-
     default boolean isBlockLoaded(BlockPos pos) {
         return this.chunkExists(pos.getX() >> 4, pos.getZ() >> 4);
     }

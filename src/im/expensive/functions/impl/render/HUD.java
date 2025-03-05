@@ -65,6 +65,7 @@ public class HUD extends Function {
         if (elements.getValueByName("Активные бинды").get()) keyBindRenderer.render(e);
         if (elements.getValueByName("Список модерации").get()) staffListRenderer.render(e);
         if (elements.getValueByName("Активный таргет").get()) targetInfoRenderer.render(e);
+        if (elements.getValueByName("Броня").get()) armorRenderer.render(e);
 
     }
 
@@ -73,14 +74,17 @@ public class HUD extends Function {
         arrayListRenderer = new ArrayListRenderer();
         coordsRenderer = new CoordsRenderer();
         Dragging potions = Expensive.getInstance().createDrag(this, "Potions", 278, 5);
-        armorRenderer = new ArmorRenderer();
         Dragging keyBinds = Expensive.getInstance().createDrag(this, "KeyBinds", 185, 5);
         Dragging dragging = Expensive.getInstance().createDrag(this, "TargetHUD", 74, 128);
         Dragging staffList = Expensive.getInstance().createDrag(this, "StaffList", 96, 5);
+        Dragging armor = Expensive.getInstance().createDrag(this, "Armor", 50, 5);
         potionRenderer = new PotionRenderer(potions);
         keyBindRenderer = new KeyBindRenderer(keyBinds);
         staffListRenderer = new StaffListRenderer(staffList);
         targetInfoRenderer = new TargetInfoRenderer(dragging);
+        armorRenderer = new ArmorRenderer(armor);
+
+
         addSettings(elements);
     }
 

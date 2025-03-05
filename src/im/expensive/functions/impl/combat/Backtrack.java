@@ -180,12 +180,13 @@ public class Backtrack extends Function {
     }
 
     @Override
-    public void onEnable() {
+    public boolean onEnable() {
         super.onEnable();
         if (mc.isSingleplayer()) {
-            return;
+            return false;
         }
         reset();
+        return false;
     }
 
     @Override

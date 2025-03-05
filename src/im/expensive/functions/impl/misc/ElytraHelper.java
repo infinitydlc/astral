@@ -107,7 +107,6 @@ public class ElytraHelper extends Function {
             if (hbSlot != mc.player.inventory.currentItem) {
                 mc.player.connection.sendPacket(new CHeldItemChangePacket(mc.player.inventory.currentItem));
             }
-            mc.player.swingArm(Hand.MAIN_HAND);
             this.delay = System.currentTimeMillis();
             return hbSlot;
         }
@@ -115,7 +114,6 @@ public class ElytraHelper extends Function {
             handUtil.setOriginalSlot(mc.player.inventory.currentItem);
             mc.playerController.pickItem(invSlot);
             mc.player.connection.sendPacket(new CPlayerTryUseItemPacket(Hand.MAIN_HAND));
-            mc.player.swingArm(Hand.MAIN_HAND);
             this.delay = System.currentTimeMillis();
             return invSlot;
         }

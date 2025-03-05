@@ -1,0 +1,21 @@
+{
+"__comment": "Designed by Jaba with BDcraft Cubik PRO 0.95 Beta - http://bdcraft.net",
+"textures": {
+    "particle": "blocks/mrsdnajabaparticle",
+    "texture": "blocks/mrsdnajaba"
+},
+"elements": [ 
+{
+    "from": [ 7.5, 2.9375, 9 ],
+    "to": [ 7.5625, 3, 9.0625 ],
+    "faces": {
+        "down":  { "uv": [ 16, 2, 14, 0 ], "rotation": 180, "texture": "#texture" },
+        "up":    { "uv": [ 1, 0, 3, 2 ], "rotation": 180, "texture": "#texture" },
+        "north": { "uv": [ 14, 0, 16, 2 ], "texture": "#texture" },
+        "south": { "uv": [ 14, 0, 16, 2 ], "texture": "#texture" },
+        "west":  { "uv": [ 12, 0, 14, 2 ], "rotation": 90, "texture": "#texture" },
+        "east":  { "uv": [ 10, 0, 12, 2 ], "rotation": 270, "texture": "#texture" }
+    }
+}
+]
+}

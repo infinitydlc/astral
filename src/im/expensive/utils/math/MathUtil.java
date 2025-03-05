@@ -122,4 +122,16 @@ public class MathUtil implements IMinecraft {
         return (end + (start - end) * MathHelper.clamp(deltaTime() * multiple, 0, 1));
     }
 
+    public static double randomWithUpdate(double min, double max, long ms, StopWatch stopWatch) {
+        double randomValue = (double)0.0F;
+        if (stopWatch.isReached(ms)) {
+            randomValue = (double)random((float)min, (float)max);
+            stopWatch.reset();
+        }
+
+        return randomValue;
+    }
+    public static float random(float min, float max) {
+        return (float)(Math.random() * (double)(max - min) + (double)min);
+    }
 }

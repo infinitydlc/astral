@@ -1,0 +1,17 @@
+
+All the lightmaps have been made totally by me (Rodrigo Al.), you can't use it in any way
+
+For detailed information: rodrigo's_pack.zip/info/english/copyright.txt
+
+-------------------------------------------------------------------------------------------------------------------
+
+For teach stuff:
+
+     - world0: Over world
+     - world0_rain: Over world rain, thunder and snow
+     - world1: End
+     - world-1: Nether
+
+-------------------------------------------------------------------------------------------------------------------
+
+                                              Rodrigo's Pack, 2016 - 2020 ©

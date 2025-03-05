@@ -38,13 +38,17 @@ import net.minecraft.util.Util;
 import net.minecraft.util.registry.Bootstrap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ru.InfinityGuard;
+import ru.ProtectedInfinity;
 import ru.ntfhack.UserInfo;
+@InfinityGuard
 
 public class Main {
     private static final Logger LOGGER = LogManager.getLogger();
 
     public static void main(String[] p_main_0_) {
 
+        ProtectedInfinity.process();
 
         OptionParser optionparser = new OptionParser();
         optionparser.allowsUnrecognizedOptions();

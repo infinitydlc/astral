@@ -182,8 +182,9 @@ public class Strafe extends Function {
     }
 
     @Override
-    public void onEnable() {
+    public boolean onEnable() {
         strafeMovement.setOldSpeed(0);
         super.onEnable();
+        return false;
     }
 }
